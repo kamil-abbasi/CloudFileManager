@@ -1,0 +1,7 @@
+services:
+  backend:
+    build:
+      context: .
+      target: prod
+    env_file:
+      - .env

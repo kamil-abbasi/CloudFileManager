@@ -1,0 +1,10 @@
+services:
+  backend:
+    build:
+      context: .
+      target: dev
+    volumes:
+      - ./cmd:/usr/src/app/cmd
+      - ./internal:/usr/src/app/internal
+    env_file:
+      - .env

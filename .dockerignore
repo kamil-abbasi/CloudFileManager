@@ -1,0 +1,9 @@
+**/.env
+**/.env.example
+**/Dockerfile
+**/.dockerignore
+**/*.compose.yaml
+**/*.md
+.gitignore
+docs
+tmp
