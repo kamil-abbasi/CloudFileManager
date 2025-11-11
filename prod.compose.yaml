@@ -1,7 +1,9 @@
 services:
-  backend:
+  files:
     build:
-      context: .
+      context: ./services/files
       target: prod
     env_file:
-      - .env
+      - ./services/files/.env
+    ports:
+      - 3000:3000

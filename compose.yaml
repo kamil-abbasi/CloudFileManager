@@ -1,10 +1,12 @@
 services:
-  backend:
+  files:
     build:
-      context: .
+      context: ./services/files
       target: dev
     volumes:
-      - ./cmd:/usr/src/app/cmd
-      - ./internal:/usr/src/app/internal
+      - ./services/files/cmd:/usr/src/app/cmd
+      - ./services/files/internal:/usr/src/app/internal
     env_file:
-      - .env
+      - ./services/files/.env
+    ports:
+      - 3000:3000
