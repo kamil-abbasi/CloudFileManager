@@ -1,6 +1,4 @@
 **/.env
 **/.env.example
-**/Dockerfile
-**/.dockerignore
 **/*.md
 tmp
