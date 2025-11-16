@@ -1,4 +1,22 @@
 services:
+  reverse-proxy:
+    build:
+      context: ./services/reverse-proxy
+      dockerfile: Dockerfile
+    env_file:
+      - ./services/reverse-proxy/.env
+    volumes:
+      - type: bind
+        source: ./services/reverse-proxy/etc/nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ./services/reverse-proxy/etc/nginx/proxy_params.conf
+        target: /etc/nginx/proxy_params.conf
+    ports:
+      - 8080:80
+    depends_on:
+      files:
+        condition: service_healthy
   files:
     build:
       context: ./services/files
@@ -8,5 +26,9 @@ services:
       - ./services/files/internal:/usr/src/app/internal
     env_file:
       - ./services/files/.env
-    ports:
-      - 3000:3000
+    healthcheck:
+      test: ['CMD', './healthcheck']
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
