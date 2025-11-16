@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"github.com/kamil-abbasi/CloudFileOperationsBackend/internal"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+	r := internal.NewApiRouter()
+
+	r.SetTrustedProxies([]string{"reverse-proxy"})
+
+	r.GET("/healthcheck")
+
+	r.Run()
 }
