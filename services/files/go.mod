@@ -2,7 +2,10 @@ module github.com/kamil-abbasi/CloudFileOperationsBackend
 
 go 1.25.2
 
-require github.com/gin-gonic/gin v1.11.0
+require (
+	github.com/gin-gonic/gin v1.11.0
+	github.com/google/uuid v1.6.0
+)
 
 require (
 	github.com/bytedance/gopkg v0.1.3 // indirect
