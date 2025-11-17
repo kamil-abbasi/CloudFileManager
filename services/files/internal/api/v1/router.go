@@ -13,13 +13,11 @@ func NewRouter(r *gin.Engine) {
 		{
 			controller := files.NewController()
 
-			filesRouter.GET("/test", controller.Test)
-
 			filesRouter.GET("/:id", controller.FindOne)
 
 			filesRouter.GET("/:id/download", controller.Download)
 
-			filesRouter.POST("/", controller.Upload)
+			filesRouter.POST("", controller.Upload)
 
 			filesRouter.PATCH("/:id", controller.Update)
 
