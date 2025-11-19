@@ -1,20 +1,25 @@
 package files
 
 import (
-	"errors"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/kamil-abbasi/CloudFileOperationsBackend/internal/config"
 	"github.com/kamil-abbasi/CloudFileOperationsBackend/internal/files"
-	"github.com/kamil-abbasi/CloudFileOperationsBackend/internal/utils"
+	"github.com/kamil-abbasi/CloudFileOperationsBackend/internal/shared"
 )
 
-type FilesController struct{}
+type FilesController struct {
+	config  *config.Config
+	service *files.FileService
+}
 
-func NewController() FilesController {
-	return FilesController{}
+func NewController(config *config.Config) FilesController {
+	return FilesController{
+		config:  config,
+		service: files.NewService(),
+	}
 }
 
 // POST /v1/files
@@ -22,44 +27,39 @@ func (controller *FilesController) Upload(c *gin.Context) {
 	rawFile, err := c.FormFile("file")
 	location := c.PostForm("location")
 
-	if location == "" {
-		location = "/"
-	}
+	userRoot := controller.config.RootPath + "/user-dev"
 
 	if err != nil {
-		if errors.Is(err, http.ErrMissingFile) {
-			c.JSON(http.StatusBadRequest, &utils.HttpError{
-				Code:    http.StatusBadRequest,
-				Message: "File missing",
-			})
-		} else {
-			c.JSON(http.StatusInternalServerError, &utils.HttpError{
-				Code:    http.StatusInternalServerError,
-				Message: "Unknown error",
-			})
-		}
+		c.JSON(http.StatusBadRequest, &shared.HttpError{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
 	}
 
 	id, err := uuid.NewUUID()
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &utils.HttpError{
+		c.JSON(http.StatusInternalServerError, &shared.HttpError{
 			Code:    http.StatusInternalServerError,
-			Message: "Error while generating file id",
+			Message: "Internal server error",
 		})
 	}
 
 	file := &files.File{
 		Id:       id.String(),
 		Filename: rawFile.Filename,
-		Location: "/data" + location + "/",
+		Location: location + "/",
 		Size:     uint64(rawFile.Size),
 	}
 
-	log.Printf("%+v\n", file)
+	controller.service.Create(files.FileCreateDto{
+		Id:       file.Id,
+		Filename: file.Filename,
+		Location: file.Location,
+		Size:     file.Size,
+	})
 
-	c.SaveUploadedFile(rawFile, file.Location+file.Filename)
-
+	c.SaveUploadedFile(rawFile, userRoot+file.Location+file.Filename)
 	c.JSON(http.StatusCreated, file)
 }
 
