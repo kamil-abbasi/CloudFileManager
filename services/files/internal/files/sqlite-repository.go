@@ -20,7 +20,22 @@ func NewSQLiteRepository() FilesRepository {
 }
 
 func (repository *FilesSQLiteRepository) FindOne(id string) (File, bool, error) {
-	return File{}, true, nil
+	  var file File
+    
+    err := repository.db.QueryRow(
+        "SELECT id, filename, location, size FROM files WHERE id = ?", 
+        id,
+    ).Scan(&file.Id, &file.Filename, &file.Location, &file.Size)
+    
+    if err == sql.ErrNoRows {
+        return File{}, false, nil
+    }
+    
+    if err != nil {
+        return File{}, false, fmt.Errorf("failed to find file, details: %v", err)
+    }
+    
+    return file, true, nil
 }
 func (repository *FilesSQLiteRepository) Create(dto FileCreateDto) (File, error) {
 
