@@ -24,6 +24,7 @@ services:
     volumes:
       - ./services/files/cmd:/usr/src/app/cmd
       - ./services/files/internal:/usr/src/app/internal
+      - files-data:/data
     env_file:
       - ./services/files/.env
     healthcheck:
@@ -32,3 +33,5 @@ services:
       timeout: 30s
       retries: 5
       start_period: 10s
+volumes:
+  files-data:
