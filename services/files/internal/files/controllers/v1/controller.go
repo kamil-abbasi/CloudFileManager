@@ -64,7 +64,15 @@ func (controller *FilesController) Upload(c *gin.Context) {
 }
 
 // GET /v1/files/:id/download
-func (controller *FilesController) Download(c *gin.Context) {}
+func (controller *FilesController) Download(c *gin.Context) {
+	id := c.Param("id")
+
+	//find file 
+	file, found, err := controller.service.FindOne(id)
+	//sending file 
+	filePath := controller.config.RootPath + "/user-dev" + file.Location + file.Filename
+	c.File(filePath)
+}
 
 // DELETE /v1/files/:id
 func (controller *FilesController) Remove(c *gin.Context) {}
