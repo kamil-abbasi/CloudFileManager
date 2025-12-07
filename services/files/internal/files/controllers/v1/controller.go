@@ -67,9 +67,24 @@ func (controller *FilesController) Upload(c *gin.Context) {
 func (controller *FilesController) Download(c *gin.Context) {
 	id := c.Param("id")
 
-	//find file 
+	//find file
 	file, found, err := controller.service.FindOne(id)
-	//sending file 
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &shared.HttpError{
+			Code:    http.StatusInternalServerError,
+			Message: "Internal server error",
+		})
+	}
+
+	if !found {
+		c.JSON(http.StatusNotFound, &shared.HttpError{
+			Code:    http.StatusNotFound,
+			Message: "File not found",
+		})
+	}
+
+	//sending file
 	filePath := controller.config.RootPath + "/user-dev" + file.Location + file.Filename
 	c.File(filePath)
 }
